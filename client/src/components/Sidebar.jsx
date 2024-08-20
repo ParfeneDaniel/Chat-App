@@ -21,6 +21,9 @@ const Sidebar = () => {
     setSentMessages,
     setUnreadMessages,
     setUnreadAtConversation,
+    setDidBlock,
+    setWereBlocked,
+    setShowChat,
   } = useChatContext();
 
   const [users, setUsers] = useState(null);
@@ -137,6 +140,9 @@ const Sidebar = () => {
         setUnreadMessages(response.data.unreadMessages);
         setUnreadAtConversation(0);
         setMessages([]);
+        setDidBlock(response.data.didBlock);
+        setWereBlocked(response.data.setWereBlocked);
+        setShowChat(true);
         socket.emit("setCurrentConversation", ID);
       })
       .catch((error) => console.log(error));

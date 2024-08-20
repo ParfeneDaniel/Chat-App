@@ -20,6 +20,14 @@ const conversationSchema = mongoose.Schema(
           type: Number,
           required: true,
         },
+        didBlock: {
+          type: Boolean,
+          default: false,
+        },
+        wereBlocked: {
+          type: Boolean,
+          default: false,
+        },
       },
     ],
     messages: [

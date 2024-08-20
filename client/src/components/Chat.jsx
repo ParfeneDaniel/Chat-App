@@ -18,6 +18,10 @@ const Chat = () => {
     setSentMessages,
     unreadMessages,
     unreadAtConversation,
+    didBlock,
+    setDidBlock,
+    wereBlocked,
+    setWereBlocked,
   } = useChatContext();
   const inputRef = useRef();
   const lastMessageRef = useRef();
@@ -29,6 +33,36 @@ const Chat = () => {
       lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
     }, 100);
   }, [conversation, messages]);
+
+  const handleBlock = () => {
+    if (didBlock) {
+      axiosInstance
+        .post(
+          "/conversations/unblockUser",
+          { ID: conversationId },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then(() => setDidBlock(false))
+        .catch((error) => console.log(error));
+    } else {
+      axiosInstance
+        .post(
+          "/conversations/blockUser",
+          { ID: conversationId },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then(() => setDidBlock(true))
+        .catch((error) => console.log(error));
+    }
+  };
 
   const sendMessage = () => {
     axiosInstance
@@ -52,7 +86,11 @@ const Chat = () => {
 
   return (
     <div className="chat">
-      <div className="username">{receiverUsername}</div>
+      <div className="details">
+        <p>{wereBlocked ? "blocked" : "unblocked"}</p>
+        <p>{receiverUsername}</p>
+        <button onClick={handleBlock}>{didBlock ? "Unblock" : "Block"}</button>
+      </div>
       <div className="messages">
         {conversationId
           ? conversation?.map((conv) => {

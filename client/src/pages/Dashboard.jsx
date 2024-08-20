@@ -15,6 +15,8 @@ const Dashboard = () => {
     setUnread,
     setUnreadMessages,
     setUnreadAtConversation,
+    setWereBlocked,
+    showChat,
   } = useChatContext();
 
   useEffect(() => {
@@ -40,6 +42,12 @@ const Dashboard = () => {
     socket.on("unreadMessageAtConversation", () => {
       setUnreadAtConversation((prev) => prev + 1);
     });
+    socket.on("blocked", () => {
+      setWereBlocked(true);
+    });
+    socket.on("unblocked", () => {
+      setWereBlocked(false);
+    });
     return () => socket.close();
   }, []);
 
@@ -48,7 +56,7 @@ const Dashboard = () => {
       <Header />
       <div className="functionalities">
         <Sidebar />
-        <Chat />
+        {showChat ? <Chat /> : <div className="empty"></div>}
       </div>
     </div>
   );

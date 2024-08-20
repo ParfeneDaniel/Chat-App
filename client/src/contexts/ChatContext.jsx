@@ -19,6 +19,9 @@ export const ChatContextProvider = ({ children }) => {
   const [sentMessages, setSentMessages] = useState(0);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [unreadAtConversation, setUnreadAtConversation] = useState(0);
+  const [didBlock, setDidBlock] = useState(null);
+  const [wereBlocked, setWereBlocked] = useState(null);
+  const [showChat, setShowChat] = useState(false);
 
   const value = {
     socket,
@@ -45,6 +48,12 @@ export const ChatContextProvider = ({ children }) => {
     setUnreadMessages,
     unreadAtConversation,
     setUnreadAtConversation,
+    didBlock,
+    setDidBlock,
+    wereBlocked,
+    setWereBlocked,
+    showChat,
+    setShowChat
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
