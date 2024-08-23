@@ -12,6 +12,7 @@ const Header = () => {
     setRefreshToken,
     setAccessToken,
     setUserId,
+    setUsername,
     setIsAuth,
   } = useAuthContext();
   const { setConversationId } = useChatContext();
@@ -33,6 +34,7 @@ const Header = () => {
         setRefreshToken(null);
         setAccessToken(null);
         setUserId(null);
+        setUsername(null);
         setIsAuth(false);
         setConversationId(null);
         navigate("/signin");

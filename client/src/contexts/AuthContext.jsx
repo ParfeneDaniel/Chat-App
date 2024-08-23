@@ -16,6 +16,9 @@ export const AuthContextProvider = ({ children }) => {
   const [userId, setUserId] = useState(
     JSON.parse(localStorage.getItem("userId")) || null
   );
+  const [username, setUsername] = useState(
+    JSON.parse(localStorage.getItem("username")) || null
+  );
   const [isAuth, setIsAuth] = useState(
     JSON.parse(localStorage.getItem("isAuth")) || false
   );
@@ -26,6 +29,8 @@ export const AuthContextProvider = ({ children }) => {
     setRefreshToken,
     userId,
     setUserId,
+    username,
+    setUsername,
     isAuth,
     setIsAuth,
   };

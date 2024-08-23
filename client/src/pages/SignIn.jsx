@@ -6,8 +6,14 @@ import { useAuthContext } from "../contexts/AuthContext";
 const SignIn = () => {
   const usernameRef = useRef();
   const passwordRef = useRef();
-  const { isAuth, setAccessToken, setRefreshToken, setUserId, setIsAuth } =
-    useAuthContext();
+  const {
+    isAuth,
+    setAccessToken,
+    setRefreshToken,
+    setUserId,
+    setUsername,
+    setIsAuth,
+  } = useAuthContext();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -29,10 +35,15 @@ const SignIn = () => {
           JSON.stringify(response.data.refreshToken)
         );
         localStorage.setItem("userId", JSON.stringify(response.data.userId));
+        localStorage.setItem(
+          "username",
+          JSON.stringify(response.data.username)
+        );
         localStorage.setItem("isAuth", true);
         setAccessToken(response.data.accessToken);
         setRefreshToken(response.data.refreshToken);
         setUserId(response.data.userId);
+        setUsername(response.data.username);
         setIsAuth(true);
         navigate("/secure/chat");
       })

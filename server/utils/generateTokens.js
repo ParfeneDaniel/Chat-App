@@ -15,6 +15,7 @@ const generateTokens = async (res, user) => {
     res.json({
       message: "You connected successfully",
       userId: user._id,
+      username: user.username,
       accessToken,
       refreshToken,
     });

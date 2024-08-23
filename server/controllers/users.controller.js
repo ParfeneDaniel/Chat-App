@@ -2,6 +2,7 @@ const User = require("../models/user.model");
 const Conversation = require("../models/conversation.model");
 const client = require("../config/connectToRedis");
 const crypto = require("crypto");
+const Group = require("../models/group.model");
 
 const getUsers = async (req, res) => {
   try {
@@ -111,6 +112,12 @@ const acceptRequest = async (req, res) => {
     const { senderId } = req.body;
     const user = await User.findById(userId);
     const senderUser = await User.findById(senderId);
+    const isValidRequest =
+      user.receivedRequests.find((req) => req.id == senderId) &&
+      senderUser.sentRequests.find((req) => req.id == userId);
+    if (!isValidRequest) {
+      return res.status(404).json({ message: "This request doesn't exist" });
+    }
     const ID = crypto.randomBytes(32).toString("hex");
     await Promise.all([
       User.updateMany(
@@ -149,6 +156,86 @@ const acceptRequest = async (req, res) => {
   }
 };
 
+const createGroup = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, guests } = req.body;
+    const ID = crypto.randomBytes(32).toString("hex");
+    const user = await User.findById(userId);
+    user.group.push({ name, ID });
+    for (g of guests) {
+      const userParty = await User.findById(g.userId);
+      userParty.groupRequest.push({ name, ID, admin: user.username });
+      await userParty.save();
+    }
+    const group = {
+      ID,
+      adminId: userId,
+      adminUsername: user.username,
+      ...req.body,
+    };
+    const newGroup = new Group(group);
+    await Promise.all([newGroup.save(), user.save()]);
+    res.status(201).json({ message: "Group was created" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", errors: error.message });
+  }
+};
+
+const acceptGroupRequest = async (req, res) => {
+  try {
+    const { ID, name } = req.body;
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    const isValidRequest = user.groupRequest.find((req) => req.ID == ID);
+    if (!isValidRequest) {
+      return res.status(404).json({ message: "This request doesn't exist" });
+    }
+    await User.updateOne({ _id: userId }, { $pull: { groupRequest: { ID } } });
+    user.group.push({ name, ID });
+    const group = await Group.findOne({ ID });
+    await Group.updateOne({ ID }, { $pull: { guests: { userId } } });
+    group.parties.push({ userId, username: user.username });
+    await Promise.all([user.save(), group.save()]);
+    res.status(201).json({ message: "You accepted this request" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", errors: error.message });
+  }
+};
+
+const getGroupRequests = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    res.status(201).json({
+      message: "Your group requests were sent",
+      groupRequests: user.groupRequests,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", errors: error.message });
+  }
+};
+
+const getGroups = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    res
+      .status(201)
+      .json({ message: "Your groups were sent", groups: user.group });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", errors: error.message });
+  }
+};
+
 module.exports = {
   getUsers,
   getReceivedRequests,
@@ -156,4 +243,8 @@ module.exports = {
   getConversations,
   sendRequest,
   acceptRequest,
+  createGroup,
+  acceptGroupRequest,
+  getGroupRequests,
+  getGroups,
 };

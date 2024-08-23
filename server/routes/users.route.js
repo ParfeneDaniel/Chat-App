@@ -7,6 +7,10 @@ const {
   getConversations,
   sendRequest,
   acceptRequest,
+  createGroup,
+  acceptGroupRequest,
+  getGroupRequests,
+  getGroups,
 } = require("../controllers/users.controller");
 
 const router = express.Router();
@@ -16,7 +20,11 @@ router.get("/getUsers", getUsers);
 router.get("/getReceivedRequests", getReceivedRequests);
 router.get("/getSentRequests", getSentRequests);
 router.get("/getConversations", getConversations);
+router.get("/getGroupRequests", getGroupRequests);
+router.get("/getGroups", getGroups);
 router.post("/sendRequest", sendRequest);
 router.post("/acceptRequest", acceptRequest);
+router.post("/createGroup", createGroup);
+router.post("/acceptGroupRequest", acceptGroupRequest);
 
 module.exports = router;

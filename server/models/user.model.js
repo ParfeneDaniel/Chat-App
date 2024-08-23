@@ -62,6 +62,34 @@ const userSchema = mongoose.Schema(
         },
       },
     ],
+    group: [
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+        ID: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+    groupRequest: [
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+        ID: {
+          type: String,
+          required: true,
+        },
+        admin: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
