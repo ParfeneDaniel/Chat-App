@@ -21,7 +21,7 @@ const Chat = () => {
     didBlock,
     setDidBlock,
     wereBlocked,
-    setWereBlocked,
+    isOnline,
   } = useChatContext();
   const inputRef = useRef();
   const lastMessageRef = useRef();
@@ -89,77 +89,70 @@ const Chat = () => {
       <div className="details">
         <p>{wereBlocked ? "blocked" : "unblocked"}</p>
         <p>{receiverUsername}</p>
+        <p>{isOnline ? "Online" : "Offline"}</p>
         <button onClick={handleBlock}>{didBlock ? "Unblock" : "Block"}</button>
       </div>
       <div className="messages">
-        {conversationId
-          ? conversation?.map((conv) => {
-              if (conv.senderId == userId) {
-                index++;
-                if (index > numberOfMessages - unreadMessages) {
-                  return (
-                    <div
-                      className="message"
-                      key={conv._id}
-                      ref={lastMessageRef}
-                    >
-                      <div className="messageSent">
-                        <p>{conv.message}</p>
-                        <div className="unread"></div>
-                      </div>
-                    </div>
-                  );
-                }
-                return (
-                  <div className="message" key={conv._id} ref={lastMessageRef}>
-                    <div className="messageSent">
-                      <p>{conv.message}</p>
-                      <div className="read"></div>
-                    </div>
-                  </div>
-                );
-              }
+        {conversation?.map((conv) => {
+          if (conv.senderId == userId) {
+            index++;
+            if (index > numberOfMessages - unreadMessages) {
               return (
                 <div className="message" key={conv._id} ref={lastMessageRef}>
-                  <div className="messageReceived">
+                  <div className="messageSent">
                     <p>{conv.message}</p>
+                    <div className="unread"></div>
                   </div>
                 </div>
               );
-            })
-          : ""}
-        {conversationId
-          ? messages?.map((msg, ind) => {
-              if (msg.senderId == userId) {
-                indexAtConversation++;
-                if (indexAtConversation > sentMessages - unreadAtConversation) {
-                  return (
-                    <div className="message" key={ind} ref={lastMessageRef}>
-                      <div className="messageSent">
-                        <p>{msg.message}</p>
-                        <div className="unread"></div>
-                      </div>
-                    </div>
-                  );
-                }
-                return (
-                  <div className="message" key={ind} ref={lastMessageRef}>
-                    <div className="messageSent">
-                      <p>{msg.message}</p>
-                      <div className="read"></div>
-                    </div>
-                  </div>
-                );
-              }
+            }
+            return (
+              <div className="message" key={conv._id} ref={lastMessageRef}>
+                <div className="messageSent">
+                  <p>{conv.message}</p>
+                  <div className="read"></div>
+                </div>
+              </div>
+            );
+          }
+          return (
+            <div className="message" key={conv._id} ref={lastMessageRef}>
+              <div className="messageReceived">
+                <p>{conv.message}</p>
+              </div>
+            </div>
+          );
+        })}
+        {messages?.map((msg, ind) => {
+          if (msg.senderId == userId) {
+            indexAtConversation++;
+            if (indexAtConversation > sentMessages - unreadAtConversation) {
               return (
                 <div className="message" key={ind} ref={lastMessageRef}>
-                  <div className="messageReceived">
+                  <div className="messageSent">
                     <p>{msg.message}</p>
+                    <div className="unread"></div>
                   </div>
                 </div>
               );
-            })
-          : ""}
+            }
+            return (
+              <div className="message" key={ind} ref={lastMessageRef}>
+                <div className="messageSent">
+                  <p>{msg.message}</p>
+                  <div className="read"></div>
+                </div>
+              </div>
+            );
+          }
+          return (
+            <div className="message" key={ind} ref={lastMessageRef}>
+              <div className="messageReceived">
+                <p>{msg.message}</p>
+              </div>
+            </div>
+          );
+        })}
       </div>
       <div className="send">
         <input type="text" ref={inputRef} />

@@ -15,7 +15,7 @@ const Header = () => {
     setUsername,
     setIsAuth,
   } = useAuthContext();
-  const { setConversationId } = useChatContext();
+  const { setConversationId, setShowChat } = useChatContext();
   const navigate = useNavigate();
 
   const handleSignOut = () => {
@@ -37,6 +37,7 @@ const Header = () => {
         setUsername(null);
         setIsAuth(false);
         setConversationId(null);
+        setShowChat(false);
         navigate("/signin");
       })
       .catch((error) => {

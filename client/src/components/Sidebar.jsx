@@ -11,7 +11,7 @@ const Sidebar = () => {
     socket,
     unread,
     setUnread,
-    onlineUsers,
+    setIsOnline,
     setReceiverId,
     setReceiverUsername,
     setConversationId,
@@ -142,6 +142,7 @@ const Sidebar = () => {
         setMessages([]);
         setDidBlock(response.data.didBlock);
         setWereBlocked(response.data.setWereBlocked);
+        setIsOnline(response.data.isOnline);
         setShowChat(true);
         socket.emit("setCurrentConversation", ID);
       })
@@ -186,7 +187,6 @@ const Sidebar = () => {
           ? conversations?.map((conv) => (
               <div key={conv._id} className="data">
                 <p>{conv.username}</p>
-                {onlineUsers[conv.id] && <p>Online</p>}
                 {unread[conv.ID] > 0 && (
                   <div className="unreadMessages">{unread[conv.ID]}</div>
                 )}

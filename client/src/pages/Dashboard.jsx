@@ -10,13 +10,13 @@ const Dashboard = () => {
   const { userId } = useAuthContext();
   const {
     setSocket,
-    setOnlineUsers,
     setMessages,
     setUnread,
     setUnreadMessages,
     setUnreadAtConversation,
     setWereBlocked,
     showChat,
+    setIsOnline,
   } = useChatContext();
 
   useEffect(() => {
@@ -26,9 +26,6 @@ const Dashboard = () => {
       },
     });
     setSocket(socket);
-    socket.on("getOnlineUsers", (data) => {
-      setOnlineUsers(data);
-    });
     socket.on("getMessage", (data) => {
       setMessages((prev) => [...prev, data]);
     });
@@ -47,6 +44,12 @@ const Dashboard = () => {
     });
     socket.on("unblocked", () => {
       setWereBlocked(false);
+    });
+    socket.on("online", () => {
+      setIsOnline(true);
+    });
+    socket.on("offline", () => {
+      setIsOnline(false);
     });
     return () => socket.close();
   }, []);

@@ -9,7 +9,7 @@ export const useChatContext = () => {
 export const ChatContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [unread, setUnread] = useState([]);
-  const [onlineUsers, setOnlineUsers] = useState(null);
+  const [isOnline, setIsOnline] = useState(null);
   const [receiverId, setReceiverId] = useState(null);
   const [receiverUsername, setReceiverUsername] = useState(null);
   const [conversationId, setConversationId] = useState(null);
@@ -28,8 +28,8 @@ export const ChatContextProvider = ({ children }) => {
     setSocket,
     unread,
     setUnread,
-    onlineUsers,
-    setOnlineUsers,
+    isOnline,
+    setIsOnline,
     conversationId,
     setConversationId,
     receiverId,
@@ -53,7 +53,7 @@ export const ChatContextProvider = ({ children }) => {
     wereBlocked,
     setWereBlocked,
     showChat,
-    setShowChat
+    setShowChat,
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;

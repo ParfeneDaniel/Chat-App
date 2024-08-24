@@ -29,11 +29,12 @@ const getConversation = async (req, res) => {
       receiverUserId.toString(),
       ID.toString()
     );
+    const receiverSocketId = onlineUsers[receiverUserId];
     const currentConversation = usersCurrentConversation[receiverUserId];
     if (currentConversation == ID) {
-      const receiverSocketId = onlineUsers[receiverUserId];
       io.to(receiverSocketId).emit("read");
     }
+    const isOnline = receiverSocketId ? true : false;
     res.status(201).json({
       message: "This is your conversations",
       conversation,
@@ -41,6 +42,7 @@ const getConversation = async (req, res) => {
       unreadMessages,
       didBlock,
       wereBlocked,
+      isOnline,
     });
   } catch (error) {
     res
@@ -74,7 +76,7 @@ const sendMessage = async (req, res) => {
     conversation.parties[index].numberOfMessages =
       conversation.parties[index].numberOfMessages + 1;
     conversation.messages.push({ message, senderId: userId });
-    conversation.save();
+    await conversation.save();
     const receiverSocketId = onlineUsers[receiverId];
     const senderSocketId = onlineUsers[userId];
     if (receiverSocketId) {
