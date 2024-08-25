@@ -23,7 +23,7 @@ const Chat = () => {
     wereBlocked,
     isOnline,
   } = useChatContext();
-  
+
   const inputRef = useRef();
   const lastMessageRef = useRef();
   var index = 0,
@@ -83,6 +83,28 @@ const Chat = () => {
         inputRef.current.value = "";
       })
       .catch((error) => console.log(error));
+  };
+
+  const sendMessageOnEnter = (e) => {
+    if (e.key == "Enter") {
+      axiosInstance
+        .post(
+          "/conversations/sendMessage",
+          { ID: conversationId, message: inputRef.current.value, receiverId },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then(() => {
+          const msg = { message: inputRef.current.value, senderId: userId };
+          setMessages((prev) => [...prev, msg]);
+          setSentMessages((prev) => prev + 1);
+          inputRef.current.value = "";
+        })
+        .catch((error) => console.log(error));
+    }
   };
 
   return (
@@ -156,7 +178,7 @@ const Chat = () => {
         })}
       </div>
       <div className="send">
-        <input type="text" ref={inputRef} />
+        <input type="text" ref={inputRef} onKeyDown={sendMessageOnEnter} />
         <button onClick={sendMessage}>Send</button>
       </div>
     </div>

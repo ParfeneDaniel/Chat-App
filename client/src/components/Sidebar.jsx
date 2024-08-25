@@ -5,7 +5,15 @@ import { useChatContext } from "../contexts/ChatContext";
 
 const Sidebar = () => {
   const axiosInstance = useAxiosInstance();
-  const [show, setShow] = useState([false, false, false, false]);
+  const [show, setShow] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
   const { accessToken } = useAuthContext();
   const {
     socket,
@@ -31,6 +39,8 @@ const Sidebar = () => {
   const [received, setReceived] = useState(null);
   const [sent, setSent] = useState(null);
   const [conversations, setConversations] = useState(null);
+  const [groupRequests, setGroupRequests] = useState(null);
+  const [groups, setGroups] = useState(null);
 
   const handleGetUsers = () => {
     axiosInstance
@@ -94,6 +104,10 @@ const Sidebar = () => {
       handleGetConversations();
     } else if (id == 4) {
       handleShowCreateGroup();
+    } else if (id == 5) {
+      handleGetGroupRequests();
+    } else if (id == 6) {
+      handleGetGroups();
     }
   };
 
@@ -158,6 +172,44 @@ const Sidebar = () => {
     setShowChat(false);
   };
 
+  const handleGetGroupRequests = () => {
+    axiosInstance
+      .get("/users/getGroupRequests", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then((response) => setGroupRequests(response.data.groupRequests))
+      .catch((error) => console.log(error));
+  };
+
+  const handleAcceptGroupRequest = (request) => {
+    axiosInstance
+      .post(
+        "/users/acceptGroupRequest",
+        { ID: request.ID, name: request.name },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .catch((error) => console.log(error));
+  };
+
+  const handleGetGroups = () => {
+    axiosInstance
+      .get("/users/getGroups", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then((response) => setGroups(response.data.groups))
+      .catch((error) => console.log(error));
+  };
+
+  const handleGetGroup = () => {};
+
   return (
     <div className="sidebar">
       <div className="buttons">
@@ -205,6 +257,28 @@ const Sidebar = () => {
                 <button onClick={() => handleGetConversation(conv.ID, conv)}>
                   Show
                 </button>
+              </div>
+            ))
+          : ""}
+        {show[5]
+          ? groupRequests?.map((req) => (
+              <div key={req._id} className="data">
+                <p>{req.name}</p>
+                <p>Admin: {req.admin}</p>
+                <button onClick={() => handleAcceptGroupRequest(req)}>
+                  Accept
+                </button>
+              </div>
+            ))
+          : ""}
+        {show[6]
+          ? groups?.map((group) => (
+              <div key={group._id} className="data">
+                <p>{group.name}</p>
+                {unread[group.ID] > 0 && (
+                  <div className="unreadMessages">{unread[conv.ID]}</div>
+                )}
+                <button>Show</button>
               </div>
             ))
           : ""}

@@ -175,7 +175,11 @@ const createGroup = async (req, res) => {
       ...req.body,
     };
     const newGroup = new Group(group);
-    await Promise.all([newGroup.save(), user.save()]);
+    await Promise.all([
+      newGroup.save(),
+      user.save(),
+      client.hSet(userId.toString(), ID.toString(), 0),
+    ]);
     res.status(201).json({ message: "Group was created" });
   } catch (error) {
     res
@@ -193,12 +197,16 @@ const acceptGroupRequest = async (req, res) => {
     if (!isValidRequest) {
       return res.status(404).json({ message: "This request doesn't exist" });
     }
-    await User.updateOne({ _id: userId }, { $pull: { groupRequest: { ID } } });
     user.group.push({ name, ID });
     const group = await Group.findOne({ ID });
-    await Group.updateOne({ ID }, { $pull: { guests: { userId } } });
     group.parties.push({ userId, username: user.username });
-    await Promise.all([user.save(), group.save()]);
+    await Promise.all([
+      user.save(),
+      group.save(),
+      User.updateOne({ _id: userId }, { $pull: { groupRequest: { ID } } }),
+      Group.updateOne({ ID }, { $pull: { guests: { userId } } }),
+      client.hSet(userId.toString(), ID.toString(), 0),
+    ]);
     res.status(201).json({ message: "You accepted this request" });
   } catch (error) {
     res
@@ -213,7 +221,7 @@ const getGroupRequests = async (req, res) => {
     const user = await User.findById(userId);
     res.status(201).json({
       message: "Your group requests were sent",
-      groupRequests: user.groupRequests,
+      groupRequests: user.groupRequest,
     });
   } catch (error) {
     res
