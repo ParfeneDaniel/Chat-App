@@ -24,6 +24,7 @@ const Sidebar = () => {
     setDidBlock,
     setWereBlocked,
     setShowChat,
+    setShowCreateGroup,
   } = useChatContext();
 
   const [users, setUsers] = useState(null);
@@ -89,8 +90,10 @@ const Sidebar = () => {
       handleGetReceived();
     } else if (id == 2) {
       handleGetSent();
-    } else {
+    } else if (id == 3) {
       handleGetConversations();
+    } else if (id == 4) {
+      handleShowCreateGroup();
     }
   };
 
@@ -144,9 +147,15 @@ const Sidebar = () => {
         setWereBlocked(response.data.setWereBlocked);
         setIsOnline(response.data.isOnline);
         setShowChat(true);
+        setShowCreateGroup(false);
         socket.emit("setCurrentConversation", ID);
       })
       .catch((error) => console.log(error));
+  };
+
+  const handleShowCreateGroup = () => {
+    setShowCreateGroup(true);
+    setShowChat(false);
   };
 
   return (
@@ -156,6 +165,9 @@ const Sidebar = () => {
         <button onClick={() => handleShow(1)}>Received</button>
         <button onClick={() => handleShow(2)}>Sent</button>
         <button onClick={() => handleShow(3)}>Conversations</button>
+        <button onClick={() => handleShow(4)}>Create</button>
+        <button onClick={() => handleShow(5)}>Receive Groups</button>
+        <button onClick={() => handleShow(6)}>Groups</button>
       </div>
       <div className="showData">
         {show[0]

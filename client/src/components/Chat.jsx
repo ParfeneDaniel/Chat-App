@@ -23,6 +23,7 @@ const Chat = () => {
     wereBlocked,
     isOnline,
   } = useChatContext();
+  
   const inputRef = useRef();
   const lastMessageRef = useRef();
   var index = 0,

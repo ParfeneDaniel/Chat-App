@@ -5,6 +5,7 @@ import { useAuthContext } from "../contexts/AuthContext";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Chat from "../components/Chat";
+import CreateGroup from "../components/CreateGroup";
 
 const Dashboard = () => {
   const { userId } = useAuthContext();
@@ -17,6 +18,7 @@ const Dashboard = () => {
     setWereBlocked,
     showChat,
     setIsOnline,
+    showCreateGroup,
   } = useChatContext();
 
   useEffect(() => {
@@ -59,7 +61,13 @@ const Dashboard = () => {
       <Header />
       <div className="functionalities">
         <Sidebar />
-        {showChat ? <Chat /> : <div className="empty"></div>}
+        {showChat ? (
+          <Chat />
+        ) : showCreateGroup ? (
+          <CreateGroup />
+        ) : (
+          <div className="empty"></div>
+        )}
       </div>
     </div>
   );

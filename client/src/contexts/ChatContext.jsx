@@ -22,6 +22,7 @@ export const ChatContextProvider = ({ children }) => {
   const [didBlock, setDidBlock] = useState(null);
   const [wereBlocked, setWereBlocked] = useState(null);
   const [showChat, setShowChat] = useState(false);
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
 
   const value = {
     socket,
@@ -54,6 +55,8 @@ export const ChatContextProvider = ({ children }) => {
     setWereBlocked,
     showChat,
     setShowChat,
+    showCreateGroup,
+    setShowCreateGroup,
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
