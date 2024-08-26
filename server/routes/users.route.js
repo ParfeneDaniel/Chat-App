@@ -12,6 +12,7 @@ const {
   getGroupRequests,
   getGroups,
   withdraw,
+  reject,
 } = require("../controllers/users.controller");
 
 const router = express.Router();
@@ -28,5 +29,6 @@ router.post("/acceptRequest", acceptRequest);
 router.post("/createGroup", createGroup);
 router.post("/acceptGroupRequest", acceptGroupRequest);
 router.post("/withdraw", withdraw);
+router.post("/reject", reject);
 
 module.exports = router;

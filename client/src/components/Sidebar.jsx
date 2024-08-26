@@ -247,6 +247,20 @@ const Sidebar = () => {
       .catch((error) => console.log(error));
   };
 
+  const handleReject = (id) => {
+    axiosInstance
+      .post(
+        "/users/reject",
+        { id },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .catch((error) => console.log(error));
+  };
+
   return (
     <div className="sidebar">
       <div className="buttons">
@@ -274,6 +288,7 @@ const Sidebar = () => {
                 <button onClick={() => handleAcceptRequest(req.id)}>
                   Accept
                 </button>
+                <button onClick={() => handleReject(req.id)}>Reject</button>
               </div>
             ))
           : ""}

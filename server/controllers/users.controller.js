@@ -284,6 +284,22 @@ const withdraw = async (req, res) => {
   }
 };
 
+const reject = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const userId = req.user.id;
+    await Promise.all([
+      User.updateOne({ _id: userId }, { $pull: { receivedRequests: { id } } }),
+      User.updateOne({ _id: id }, { $pull: { sentRequests: { id: userId } } }),
+    ]);
+    res.status(201).json({ message: "Your request was rejected" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", errors: error.message });
+  }
+};
+
 module.exports = {
   getUsers,
   getReceivedRequests,
@@ -296,4 +312,5 @@ module.exports = {
   getGroupRequests,
   getGroups,
   withdraw,
+  reject,
 };
