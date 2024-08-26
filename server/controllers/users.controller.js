@@ -7,10 +7,27 @@ const Group = require("../models/group.model");
 const getUsers = async (req, res) => {
   try {
     const userId = req.user.id;
-    const users = await User.find({ _id: { $ne: userId } }).select([
+    let users = await User.find({ _id: { $ne: userId } }).select([
       "_id",
       "username",
     ]);
+    const currentUser = await User.findById(userId);
+    users = users.filter((user) => {
+      const userObjectId = user._id.toString();
+      let valid = currentUser.receivedRequests.find(
+        (req) => req.id.toString() == userObjectId
+      );
+      if (valid) return false;
+      valid = currentUser.sentRequests.find(
+        (req) => req.id.toString() == userObjectId
+      );
+      if (valid) return false;
+      valid = currentUser.conversations.find(
+        (conversation) => conversation.id.toString() === userObjectId
+      );
+      if (valid) return false;
+      return true;
+    });
     res.status(201).json({ message: "All users", users });
   } catch (error) {
     res
