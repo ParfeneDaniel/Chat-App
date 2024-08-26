@@ -6,6 +6,7 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Chat from "../components/Chat";
 import CreateGroup from "../components/CreateGroup";
+import ChatGroup from "../components/ChatGroup";
 
 const Dashboard = () => {
   const { userId } = useAuthContext();
@@ -19,6 +20,7 @@ const Dashboard = () => {
     showChat,
     setIsOnline,
     showCreateGroup,
+    showGroupChat,
   } = useChatContext();
 
   useEffect(() => {
@@ -65,6 +67,8 @@ const Dashboard = () => {
           <Chat />
         ) : showCreateGroup ? (
           <CreateGroup />
+        ) : showGroupChat ? (
+          <ChatGroup />
         ) : (
           <div className="empty"></div>
         )}

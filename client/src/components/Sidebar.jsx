@@ -14,7 +14,7 @@ const Sidebar = () => {
     false,
     false,
   ]);
-  const { accessToken } = useAuthContext();
+  const { accessToken, username } = useAuthContext();
   const {
     socket,
     unread,
@@ -33,6 +33,8 @@ const Sidebar = () => {
     setWereBlocked,
     setShowChat,
     setShowCreateGroup,
+    setShowGroupChat,
+    setName,
   } = useChatContext();
 
   const [users, setUsers] = useState(null);
@@ -204,11 +206,32 @@ const Sidebar = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       })
-      .then((response) => setGroups(response.data.groups))
+      .then((response) => {
+        setGroups(response.data.groups);
+        setUnread(response.data.unreadMessages);
+      })
       .catch((error) => console.log(error));
   };
 
-  const handleGetGroup = () => {};
+  const handleGetGroup = (ID) => {
+    axiosInstance
+      .get(`/groups/getGroup/${ID}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then((response) => {
+        setConversation(response.data.group.messages);
+        setName(response.data.group.name);
+        setConversationId(ID);
+        setShowChat(false);
+        setShowCreateGroup(false);
+        setShowGroupChat(true);
+        setMessages([]);
+        setUnread((prev) => ({ ...prev, [ID]: 0 }));
+        socket.emit("setCurrentConversation", ID);
+      });
+  };
 
   return (
     <div className="sidebar">
@@ -276,9 +299,9 @@ const Sidebar = () => {
               <div key={group._id} className="data">
                 <p>{group.name}</p>
                 {unread[group.ID] > 0 && (
-                  <div className="unreadMessages">{unread[conv.ID]}</div>
+                  <div className="unreadMessages">{unread[group.ID]}</div>
                 )}
-                <button>Show</button>
+                <button onClick={() => handleGetGroup(group.ID)}>Show</button>
               </div>
             ))
           : ""}

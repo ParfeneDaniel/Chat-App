@@ -9,7 +9,7 @@ const CreateGroup = () => {
   const [filter, setFilter] = useState("");
   const [guests, setGuests] = useState([]);
   const axiosInstance = useAxiosInstance();
-  const { accessToken } = useAuthContext();
+  const { accessToken, username } = useAuthContext();
   const { setShowCreateGroup } = useChatContext();
 
   const handleChange = (e) => {
@@ -35,7 +35,7 @@ const CreateGroup = () => {
     axiosInstance
       .post(
         "/users/createGroup",
-        { name: nameRef.current.value, guests },
+        { name: nameRef.current.value, guests, username },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -53,9 +53,7 @@ const CreateGroup = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       })
-      .then((response) => {
-        setUsers(response.data.users);
-      })
+      .then((response) => setUsers(response.data.users))
       .catch((error) => console.log(error));
   }, []);
 

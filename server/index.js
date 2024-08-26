@@ -12,7 +12,7 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/conversations", conversationsRouter);
-app.use("/api/group", groupRouter);
+app.use("/api/groups", groupRouter);
 
 server.listen(3001, () => {
   connectedToDB();

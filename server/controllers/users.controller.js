@@ -159,7 +159,7 @@ const acceptRequest = async (req, res) => {
 const createGroup = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { name, guests } = req.body;
+    const { name, guests, username } = req.body;
     const ID = crypto.randomBytes(32).toString("hex");
     const user = await User.findById(userId);
     user.group.push({ name, ID });
@@ -172,6 +172,7 @@ const createGroup = async (req, res) => {
       ID,
       adminId: userId,
       adminUsername: user.username,
+      parties: [{ userId, username }],
       ...req.body,
     };
     const newGroup = new Group(group);
@@ -234,9 +235,12 @@ const getGroups = async (req, res) => {
   try {
     const userId = req.user.id;
     const user = await User.findById(userId);
-    res
-      .status(201)
-      .json({ message: "Your groups were sent", groups: user.group });
+    const unreadMessages = await client.hGetAll(userId.toString());
+    res.status(201).json({
+      message: "Your groups were sent",
+      groups: user.group,
+      unreadMessages,
+    });
   } catch (error) {
     res
       .status(500)
