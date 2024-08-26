@@ -233,6 +233,20 @@ const Sidebar = () => {
       });
   };
 
+  const handleWithdraw = (id) => {
+    axiosInstance
+      .post(
+        "/users/withdraw",
+        { id },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .catch((error) => console.log(error));
+  };
+
   return (
     <div className="sidebar">
       <div className="buttons">
@@ -267,6 +281,7 @@ const Sidebar = () => {
           ? sent?.map((req) => (
               <div key={req._id} className="data">
                 <p>{req.username}</p>
+                <button onClick={() => handleWithdraw(req.id)}>Withdraw</button>
               </div>
             ))
           : ""}

@@ -265,6 +265,25 @@ const getGroups = async (req, res) => {
   }
 };
 
+const withdraw = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const userId = req.user.id;
+    await Promise.all([
+      User.updateOne({ _id: userId }, { $pull: { sentRequests: { id } } }),
+      User.updateOne(
+        { _id: id },
+        { $pull: { receivedRequests: { id: userId } } }
+      ),
+    ]);
+    res.status(201).json({ message: "Your request was withdrew" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", errors: error.message });
+  }
+};
+
 module.exports = {
   getUsers,
   getReceivedRequests,
@@ -276,4 +295,5 @@ module.exports = {
   acceptGroupRequest,
   getGroupRequests,
   getGroups,
+  withdraw,
 };
